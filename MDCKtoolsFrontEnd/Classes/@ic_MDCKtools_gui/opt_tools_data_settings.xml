@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<settings>
+<DefaultDirectory>C:\Users\yalexand\Imperial-OMEkit\OMEkitFrontEnd\TestData</DefaultDirectory>
+<IcyDirectory>c:\Users\yalexand\ICY\</IcyDirectory>
+<downsampling>8</downsampling>
+<angle_downsampling>1</angle_downsampling>
+<FBP_interp>linear</FBP_interp>
+<FBP_filter>Ram-Lak</FBP_filter>
+<FBP_fscaling>1</FBP_fscaling>
+</settings>
