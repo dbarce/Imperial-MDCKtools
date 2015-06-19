@@ -308,6 +308,10 @@ classdef ic_MDCKtools_data_controller < handle
         end        
 %-------------------------------------------------------------------------%        
         function apply_segmentation(obj,~,~)            
+           
+            [sizeX,sizeY,~,sizeC,nT] = size(obj.imgdata);
+            obj.object_mask = zeros(sizeX,sizeY);
+            obj.sources_mask = zeros(sizeX,sizeY);
             
             if isempty(obj.imgdata), errordlg('no data'), return, end;
             
@@ -347,7 +351,8 @@ classdef ic_MDCKtools_data_controller < handle
 %-------------------------------------------------------------------------%        
         function add_source(obj,~,~)            
             set(obj.display_tabpanel, 'SelectedChild', 1); % scene
-
+                
+                
                 %
                 h = figure('units','normalized','outerposition',[0 0 1 1]);
                 u = squeeze(obj.imgdata(:,:,1,1,1)); % just first image
