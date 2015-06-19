@@ -73,16 +73,16 @@ classdef ic_MDCKtools_data_controller < handle
                         
         % graphics
         %
-        scene_popupmenu_str = {'masked 0-th image','sources','amplitude','relative amplitude','activity','distance to source','classify by parabolic fit'};
+        scene_popupmenu_str = {'masked 0-th image','sources','amplitude','relative amplitude','activity','distance to source','dyn-type (parabolic fit)'};
         scene_channel_selector_popupmenu_str = {'Ch1','Ch2'};
         globals_channel_selector_popupmenu_str = {'Ch1','Ch2','All channels'};
         corrplot_channel_selector_popupmenu_str = {'Ch1','Ch2','All channels'};
         histo_channel_selector_popupmenu_str = {'Ch1','Ch2'};        
 
         globals_popupmenu_str = {'average(t)','std(t)','gradmod(t)','std vs average'};            
-        corrplotX_popupmenu_str = {'distance to source','amplitude','relative amplitude','activity','classify by parabolic fit'};            
-        corrplotY_popupmenu_str = {'distance to source','amplitude','relative amplitude','activity','classify by parabolic fit'};            
-        histo_popupmenu_str = {'masked 0-th image','amplitude','relative amplitude','activity','distance to source','classify by parabolic fit'};               
+        corrplotX_popupmenu_str = {'distance to source','amplitude','relative amplitude','activity','dyn-type (parabolic fit)'};            
+        corrplotY_popupmenu_str = {'distance to source','amplitude','relative amplitude','activity','dyn-type (parabolic fit)'};            
+        histo_popupmenu_str = {'masked 0-th image','amplitude','relative amplitude','activity','distance to source','dyn-type (parabolic fit)'};               
         % 
         object_mask = [];
         sources_mask = [];
@@ -449,7 +449,7 @@ function u = calculate_stat_image(obj,image_type,channel,~)
                         for x=1:sizeX
                             for y=1:sizeY
                                 if obj.object_mask(x,y)
-                                    v = obj.imgdata(x,y,1,c,:);
+                                    v = squeeze(obj.imgdata(x,y,1,c,:));
                                     minv = min(v(:));
                                     maxv = max(v(:));
                                     u(x,y) = maxv-minv;                                        
@@ -462,7 +462,7 @@ function u = calculate_stat_image(obj,image_type,channel,~)
                         for x=1:sizeX
                             for y=1:sizeY
                                 if obj.object_mask(x,y)
-                                    v = obj.imgdata(x,y,1,c,:);
+                                    v = squeeze(obj.imgdata(x,y,1,c,:));
                                     minv = min(v(:));
                                     maxv = max(v(:));
                                     u(x,y) = (maxv-minv)/mean(v);                                        
@@ -482,7 +482,7 @@ function u = calculate_stat_image(obj,image_type,channel,~)
     elseif  strcmp(image_type,'distance to source')
                         u = bwdist( obj.sources_mask );
                         u(~obj.object_mask)=0;
-    elseif  strcmp(image_type,'classify by parabolic fit')
+    elseif  strcmp(image_type,'dyn-type (parabolic fit)')
                         u = zeros(sizeX,sizeY);
                         t = (1:nT)/nT;                        
                         for x=1:sizeX
