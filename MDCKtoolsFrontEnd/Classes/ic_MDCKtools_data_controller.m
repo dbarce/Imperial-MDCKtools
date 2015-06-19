@@ -73,16 +73,16 @@ classdef ic_MDCKtools_data_controller < handle
                         
         % graphics
         %
-        scene_popupmenu_str = {'masked 0-th image','sources','amplitude','relative amplitude','activity','distance to source'};
+        scene_popupmenu_str = {'masked 0-th image','sources','amplitude','relative amplitude','activity','distance to source','classify by parabolic fit'};
         scene_channel_selector_popupmenu_str = {'Ch1','Ch2'};
         globals_channel_selector_popupmenu_str = {'Ch1','Ch2','All channels'};
         corrplot_channel_selector_popupmenu_str = {'Ch1','Ch2','All channels'};
         histo_channel_selector_popupmenu_str = {'Ch1','Ch2'};        
 
         globals_popupmenu_str = {'average(t)','std(t)','gradmod(t)','std vs average'};            
-        corrplotX_popupmenu_str = {'distance to source','amplitude','relative amplitude','activity'};            
-        corrplotY_popupmenu_str = {'distance to source','amplitude','relative amplitude','activity'};            
-        histo_popupmenu_str = {'masked 0-th image','amplitude','relative amplitude','activity','distance to source'};               
+        corrplotX_popupmenu_str = {'distance to source','amplitude','relative amplitude','activity','classify by parabolic fit'};            
+        corrplotY_popupmenu_str = {'distance to source','amplitude','relative amplitude','activity','classify by parabolic fit'};            
+        histo_popupmenu_str = {'masked 0-th image','amplitude','relative amplitude','activity','distance to source','classify by parabolic fit'};               
         % 
         object_mask = [];
         sources_mask = [];
@@ -482,6 +482,49 @@ function u = calculate_stat_image(obj,image_type,channel,~)
     elseif  strcmp(image_type,'distance to source')
                         u = bwdist( obj.sources_mask );
                         u(~obj.object_mask)=0;
+    elseif  strcmp(image_type,'classify by parabolic fit')
+                        u = zeros(sizeX,sizeY);
+                        t = (1:nT)/nT;                        
+                        for x=1:sizeX
+                            for y=1:sizeY
+                                if obj.object_mask(x,y)
+                                    v = squeeze(obj.imgdata(x,y,1,c,:));
+                                    minv = min(v(:));
+                                    maxv = max(v(:));
+                                    v = (v-minv)/(maxv-minv);
+                                    p = polyfit(t,v',2);
+                                    a = p(1);
+                                    b = p(2);
+                                    t0 = -b/(2*a);
+                                    r = 0;
+                                    if a > 0
+                                        if t0 < 0
+                                            r = 1;
+                                        elseif t0 > 0 && t0 < 1/2
+                                            r = 2;
+                                        elseif t0 > 1/2 && t0 < 1
+                                            r = 3;
+                                        elseif t0 > 1
+                                            r = 4;
+                                        end
+                                    elseif a < 0
+                                        if t0 < 0
+                                            r = 8;
+                                        elseif t0 > 0 && t0 < 1/2
+                                            r = 7;
+                                        elseif t0 > 1/2 && t0 < 1
+                                            r = 6;
+                                        elseif t0 > 1
+                                            r = 5;
+                                        end                                                                                
+                                    elseif a == 0
+                                            r = 9;
+                                    end
+                                    u(x,y) = r;                                    
+                                end
+                            end
+                        end                   
+                        u(~obj.object_mask)=0;                                                
     end
                 
 end
