@@ -59,8 +59,8 @@ function handles = setup_menu(obj,handles)
     %================================= segmentation
     
     menu_segmentation = uimenu(obj.window,'Label','Segmentation');   
-    handles.menu_segmentation_Go = uimenu(menu_segmentation,'Label','Go Segment everything');       
-    handles.menu_segmentation_options = uimenu(menu_segmentation,'Label','Segmentation Options','Separator','on');    
+    handles.menu_segmentation_Go = uimenu(menu_segmentation,'Label','Apply NTH Segmentation');       
+    handles.menu_segmentation_options = uimenu(menu_segmentation,'Label','NTH Segmentation Setups');    
     handles.menu_segmentation_add_source = uimenu(menu_segmentation,'Label','Add Source','Separator','on');        
     handles.menu_segmentation_delete_object = uimenu(menu_segmentation,'Label','Delete Object');            
     handles.menu_segmentation_select_object = uimenu(menu_segmentation,'Label','Select Object');                

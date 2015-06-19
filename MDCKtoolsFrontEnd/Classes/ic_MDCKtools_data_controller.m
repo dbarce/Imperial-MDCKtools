@@ -45,7 +45,18 @@ classdef ic_MDCKtools_data_controller < handle
         %
         display_tabpanel;
         lower_layout;
-        
+
+        % sgm options
+        Quantile = 0.6;
+        % NTH Segmentation settings
+        threshold = 0.01;
+        rel_bg_scale = 3;                            
+        % NTH Segmentation settings [microns]
+        scale = 576;
+        smoothing = 128;
+        min_area = 409600;
+        close_radius = 384;
+                        
             % scene
         scene_popupmenu
         scene_channel_selector_popupmenu
@@ -76,8 +87,8 @@ classdef ic_MDCKtools_data_controller < handle
         object_mask = [];
         sources_mask = [];
         %
-        imgdata = [];           
-                               
+        imgdata = [];                
+                                                       
     end                    
     
     properties(Transient)
@@ -177,6 +188,20 @@ classdef ic_MDCKtools_data_controller < handle
             obj.histo_channel_selector_popupmenu = uicontrol( 'Style', 'popupmenu', 'String', obj.histo_channel_selector_popupmenu_str, 'Parent', lower_scene_layout,'Callback', @obj.onHistoChannelSet );                            
                                                                                     
         end
+        
+        function set_NTH_Segmentation_settings_default(obj,~,~)
+            % sgm options
+            obj.Quantile = 0.6;
+            % NTH Segmentation settings
+            obj.threshold = 0.01;
+            obj.rel_bg_scale = 3;                            
+            % NTH Segmentation settings [microns]
+            obj.scale = 576;
+            obj.smoothing = 128;
+            obj.min_area = 409600;
+            obj.close_radius = 384;            
+        end
+        
 %-------------------------------------------------------------------------%
         function delete(obj)
             obj.save_settings;
@@ -283,46 +308,31 @@ classdef ic_MDCKtools_data_controller < handle
         end        
 %-------------------------------------------------------------------------%        
         function apply_segmentation(obj,~,~)            
-            set(obj.display_tabpanel, 'SelectedChild', 1); % scene
             
-% % suitable for 16 downsampling, 4 microns per pixel            
-%              scale = 9;
-%              rel_bg_scale = 3;
-%              smoothing = 2;
-%              min_area  = 100;
-%              close_radius = 6;
+            if isempty(obj.imgdata), errordlg('no data'), return, end;
+            
+            set(obj.display_tabpanel, 'SelectedChild', 1); % scene
+                             
+            % experss segmentation scales in pixels
+            uppix = obj.microns_per_pixel*obj.downsampling;
+            scale = fix(obj.scale/uppix);
+            smoothing = fix(obj.smoothing/uppix);
+            min_area = fix(obj.min_area/uppix/uppix);
+            close_radius = fix(obj.close_radius/uppix);
 
-             uppix = obj.microns_per_pixel*obj.downsampling;
-
-             %sgm options!
-             Quantile = 0.6;
-             threshold = 0.01;
-             rel_bg_scale = 3;            
-                         
-             % these are in microns
-             scale_um = 576;
-             smoothing_um = 128;
-             min_area_um = 409600;
-             close_radius_um = 384;
-             
-             scale = fix(scale_um/uppix);
-             smoothing = fix(smoothing_um/uppix);
-             min_area = fix(min_area_um/uppix/uppix);
-             close_radius = fix(close_radius_um/uppix);
-
-             if scale < 2, scale = 2; end; 
-             if smoothing < 1, smoothing = 1; end;
-             if min_area < 1, min_area = 1; end; 
-             if close_radius < 1, close_radius = 1; end;
+            if scale < 2, scale = 2; end; 
+            if smoothing < 1, smoothing = 1; end;
+            if min_area < 1, min_area = 1; end; 
+            if close_radius < 1, close_radius = 1; end;
                                       
             u = squeeze(obj.imgdata(:,:,1,1,1)); % just first image
             
             zeromask = (0==u);
             u1 = u(~zeromask);
-            uq = quantile(u1(:),Quantile);
+            uq = quantile(u1(:),obj.Quantile);
             u( u < uq ) = uq;
 
-            z = nth_segmentation(u,scale,rel_bg_scale,threshold,smoothing,min_area);
+            z = nth_segmentation(u,scale,obj.rel_bg_scale,obj.threshold,smoothing,min_area);
 
             z(z~=0)=1;
             z = imclose(z,strel('disk',close_radius)); % 6 for 1/16            

@@ -203,7 +203,8 @@ classdef ic_MDCKtools_front_end_menu_controller < handle
 
         %================================= segmentation
 
-        function menu_segmentation_options_callback(obj, ~, ~)            
+        function menu_segmentation_options_callback(obj, ~, ~)  
+            settings = NTH_Segmentation_settings(obj.data_controller)
         end        
          %------------------------------------------------------------------                
             
