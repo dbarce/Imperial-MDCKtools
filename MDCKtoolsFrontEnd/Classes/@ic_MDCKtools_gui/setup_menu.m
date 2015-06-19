@@ -27,6 +27,7 @@ function handles = setup_menu(obj,handles)
     histogram_bins = handles.data_controller.histogram_bins;    
     correlation_plot_width = handles.data_controller.correlation_plot_width;    
     microns_per_pixel = handles.data_controller.microns_per_pixel;
+    time_step = handles.data_controller.time_step;
         
     %================================= file
 
@@ -68,7 +69,8 @@ function handles = setup_menu(obj,handles)
     
     menu_settings = uimenu(obj.window,'Label','Settings');        
     handles.menu_settings_microns_per_pixel = uimenu(menu_settings,'Label',['Microns per pixel ' num2str(microns_per_pixel)]);                
-    handles.menu_settings_downsampling = uimenu(menu_settings,'Label',['Downsampling ' num2str(downsampling)]);        
+    handles.menu_settings_downsampling = uimenu(menu_settings,'Label',['Downsampling ' num2str(downsampling)]); 
+    handles.menu_settings_time_step = uimenu(menu_settings,'Label',['Time step ' num2str(time_step)],'Separator','on');  
     handles.menu_settings_histogram_bins = uimenu(menu_settings,'Label',['Histogram bins ' num2str(histogram_bins)],'Separator','on');        
     handles.menu_settings_corrplot_width = uimenu(menu_settings,'Label',['Correlation plot width ' num2str(correlation_plot_width)]);        
         

@@ -35,6 +35,7 @@ classdef ic_MDCKtools_data_controller < handle
         correlation_plot_width = 200;
         
         microns_per_pixel = 4;
+        time_step = 2700; % seconds
         
         % graphics        
         scene_axes;
@@ -176,7 +177,10 @@ classdef ic_MDCKtools_data_controller < handle
             obj.histo_channel_selector_popupmenu = uicontrol( 'Style', 'popupmenu', 'String', obj.histo_channel_selector_popupmenu_str, 'Parent', lower_scene_layout,'Callback', @obj.onHistoChannelSet );                            
                                                                                     
         end
-       
+%-------------------------------------------------------------------------%
+        function delete(obj)
+            obj.save_settings;
+        end       
 %-------------------------------------------------------------------------%                
          function clear_all(obj,~)
              obj.imgdata = [];
@@ -288,8 +292,7 @@ classdef ic_MDCKtools_data_controller < handle
 %              min_area  = 100;
 %              close_radius = 6;
 
-             uppix = obj.microns_per_pixel;
-             dsmpl = obj.downsampling;
+             uppix = obj.microns_per_pixel*obj.downsampling;
 
              %sgm options!
              Quantile = 0.6;
@@ -302,10 +305,10 @@ classdef ic_MDCKtools_data_controller < handle
              min_area_um = 409600;
              close_radius_um = 384;
              
-             scale = fix(scale_um/uppix/dsmpl);
-             smoothing = fix(smoothing_um/uppix/dsmpl);
-             min_area = fix(min_area_um/uppix/dsmpl/uppix/dsmpl);
-             close_radius = fix(close_radius_um/uppix/dsmpl);
+             scale = fix(scale_um/uppix);
+             smoothing = fix(smoothing_um/uppix);
+             min_area = fix(min_area_um/uppix/uppix);
+             close_radius = fix(close_radius_um/uppix);
 
              if scale < 2, scale = 2; end; 
              if smoothing < 1, smoothing = 1; end;

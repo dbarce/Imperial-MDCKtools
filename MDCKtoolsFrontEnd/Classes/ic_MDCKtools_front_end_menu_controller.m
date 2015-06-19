@@ -66,6 +66,7 @@ classdef ic_MDCKtools_front_end_menu_controller < handle
         menu_settings_histogram_bins;
         menu_settings_corrplot_width;        
         menu_settings_microns_per_pixel;
+        menu_settings_time_step;
                                 
     end
     
@@ -261,12 +262,19 @@ classdef ic_MDCKtools_front_end_menu_controller < handle
          %------------------------------------------------------------------                
             
         function menu_settings_microns_per_pixel_callback(obj, ~, ~)       
-             value = fix(enter_value());
+             value = enter_value();
              if isempty(value) || ~isnumeric(value) || value==obj.data_controller.microns_per_pixel || value <=0, return, end;
              obj.data_controller.microns_per_pixel = value;            
              set(obj.menu_settings_microns_per_pixel,'Label',['Microns per pixel ' num2str(obj.data_controller.microns_per_pixel)]);                                                 
         end        
-                
+
+        function menu_settings_time_step_callback(obj, ~, ~)
+             value = enter_value();
+             if isempty(value) || ~isnumeric(value) || value==obj.data_controller.time_step || value <=0, return, end;
+             obj.data_controller.time_step = value;            
+             set(obj.menu_settings_time_step,'Label',['Microns per pixel ' num2str(obj.data_controller.time_step)]);                                                             
+        end
+        
          %------------------------------------------------------------------                
                                                            
     %================================= % VANITY       
